@@ -76,18 +76,38 @@ function App() {
     let daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
     return daysDiff;
   }
+
+
   let currentDate = new Date();
-let year = currentDate.getFullYear();
-let month = currentDate.getMonth() + 1;
-let day = currentDate.getDate();
-let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+  let year = currentDate.getFullYear();
+  let month = currentDate.getMonth() + 1;
+  let day = currentDate.getDate();
+  let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+
+  function compareDates(date1, date2) {
+    // Convert the strings to Date objects
+    let d1 = new Date(date1);
+    let d2 = new Date(date2);
+  
+    // Compare the dates using the getTime() method
+    if (d1.getTime() > d2.getTime()) {
+      // date1 is less than date2
+      return true;
+    } else {
+      // date1 is not less than date2
+      return false;
+    }
+  }
 
 
 
   return (
-    <div className=" h-screen w-screen flex items-center justify-around  ">
+    <div className="flex flex-col items-center justify-start w-screen min-h-screen overflow-x-hidden ">
+
+      <h1 className="mt-5 text-xl">GUEST WIFI MONITORING</h1>
       <form
-        className=" min-w-[200px] w-[50%] max-w-[400px] flex flex-col gap-3  "
+        className="  my-10 min-w-[300px] w-[50%] max-w-[400px] flex flex-col gap-3  "
         onSubmit={(e) => {
           e.preventDefault();
           let date = new Date(userData.date);
@@ -113,7 +133,7 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
           }}
         />
         <Input
-          placeholder="Device Model"
+          placeholder="Device Model / IP"
           value={userData.device}
           onChange={(e) => {
             setUserData({...userData, device: e.target.value});
@@ -130,15 +150,17 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
         <button>Create</button>
       </form>
 
-      <div className=" w-[60%] py-10 px-5 flex flex-wrap gap-2  ">
+      <div className=" w-[60%] py-2 px-5 flex flex-wrap gap-2 justify-center  ">
+
+        
         {data.map((e, key) => (
-          <div className="min-w-[300px] min-h-[100px] flex flex-row items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-green-400 border-[1px] border-opacity-30">
+          <div className={e.status == "Due"?"min-w-[300px] min-h-[100px] flex  flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-red-600 border-[1px] border-opacity-30":"min-w-[300px] min-h-[100px] flex flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-green-400 border-[1px] border-opacity-30 box-border"}>
             <div>
               {editingIndex === key ? (
                 
-                <div className="flex gap-3 flex-col">
+                <div className="flex flex-col gap-3">
 
-                  <div className=" flex gap-3">
+                  <div className="flex items-end gap-3 ">
                   <Input
                   placeholder="Name"
                   value={euserData.name}
@@ -174,10 +196,14 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
                 </div>
               ) : (
                 <>
-                  <p key={key}>Name: <span className=" text-green-400">{e.name}</span> </p>
-                  <p>Device Model: <span className=" text-green-400 uppercase">{e.device}</span> </p>
-                  <p>Date Started: <span className=" text-green-400">{e.date}</span> </p>
-                  {formattedDate > e.due?
+                  <p key={key}>Name: <span className="text-green-400 ">{e.name}</span> </p>
+                  <p>Device Model: <span className="text-green-400 uppercase ">{e.device}</span> </p>
+                  <p>Date Started: <span className="text-green-400 ">{e.date}</span> </p>
+
+               
+
+              
+                  {compareDates(formattedDate,e.dueDate)?
                   
                   update(key,{...e,status:"Due"})
                   :update(key,{...e,status:"Connected"})}
@@ -190,7 +216,7 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
 
                   <div>
                     <p>Status:<span className={e.status.toUpperCase()==="CONNECTED"?" text-green-400 ":" text-red-400"}>{e.status.toUpperCase()}</span> </p>
-                    <p>Days Used: <span className=" text-green-400">{daysElapsed(e.date)} day</span> </p>
+                    <p>Days Used: <span className="text-green-400 ">{daysElapsed(e.date)} day</span> </p>
                   
                   
                   </div>
@@ -198,11 +224,11 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
               )}
             </div>
 
-            <div className="flex items-center justify-start gap-2 h-full">
+            <div className="flex items-center justify-start h-full gap-2">
               {editingIndex === key ? (
                 <>
                   <span
-                    className="material-symbols-outlined cursor-pointer hover:text-green-400"
+                    className="cursor-pointer material-symbols-outlined hover:text-green-400"
                     onClick={() => {
                       let date = new Date(euserData.date);
           date.setMonth(date.getMonth() + 1)
@@ -223,7 +249,7 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
                   </span>
 
                   <span
-                    className="material-symbols-outlined cursor-pointer p-1 hover:text-red-400"
+                    className="p-1 cursor-pointer material-symbols-outlined hover:text-red-400"
                     onClick={() => {
                       esetUserData({
                         name:"",
@@ -240,7 +266,7 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
               ) : (
                 <>
                   <span
-                    className="material-symbols-outlined cursor-pointer hover:text-green-400"
+                    className="cursor-pointer material-symbols-outlined hover:text-green-400"
                     onClick={() => {
                       esetUserData({
                         name:e.name,
@@ -255,7 +281,7 @@ let formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day.toString
                   </span>
 
                   <span
-                    className="material-symbols-outlined cursor-pointer p-1 hover:text-red-400"
+                    className="p-1 cursor-pointer material-symbols-outlined hover:text-red-400"
                     onClick={() => {
 
                       if (confirm(`Are you sure you want to Delete ${e.name}?`)) {
