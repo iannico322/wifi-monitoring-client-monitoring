@@ -168,8 +168,8 @@ function App() {
 
       <div className=" w-[60%] py-2 px-5 flex flex-wrap gap-2 justify-center  ">
 
-       {data? data.filter((e)=>e.name.toLowerCase().startsWith(search) 
-            || e.name.toLowerCase().includes(search)).map((e, key) => (
+       {data? data.filter((e)=>e.name.toLowerCase().startsWith(search.toLowerCase()) 
+            || e.name.toLowerCase().includes(search.toLowerCase())).map((e, key) => (
               <div className={e.status == "Due"?"min-w-[300px] min-h-[100px] flex  flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-red-600 border-[1px] border-opacity-30":"min-w-[300px] min-h-[100px] flex flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-green-400 border-[1px] border-opacity-30 box-border"}>
                 <div>
                   {editingIndex === key ? (
