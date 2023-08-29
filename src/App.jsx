@@ -61,6 +61,8 @@ function App() {
   });
  
 
+  const [search,setSearch] = useState("")
+
  
   const [editingIndex, setEditingIndex] = useState(null);
 
@@ -150,156 +152,176 @@ function App() {
         <button>Create</button>
       </form>
 
+
+
+          <input type="search" placeholder="Search Name" 
+
+          value={search}
+          onChange={(e)=>{
+            setSearch(e.target.value)
+          }}
+          
+          
+          
+          className=' px-3 py-2 rounded-md min-w-[300px] w-[50%] max-w-[400px] outline-none caret-[#00fa00] font-[200]'  />
+
+
       <div className=" w-[60%] py-2 px-5 flex flex-wrap gap-2 justify-center  ">
 
-        
-        {data.map((e, key) => (
-          <div className={e.status == "Due"?"min-w-[300px] min-h-[100px] flex  flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-red-600 border-[1px] border-opacity-30":"min-w-[300px] min-h-[100px] flex flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-green-400 border-[1px] border-opacity-30 box-border"}>
-            <div>
-              {editingIndex === key ? (
-                
-                <div className="flex flex-col gap-3">
-
-                  <div className="flex items-end gap-3 ">
-                  <Input
-                  placeholder="Name"
-                  value={euserData.name}
+       {data? data.filter((e)=>e.name.toLowerCase().startsWith(search) 
+            || e.name.toLowerCase().includes(search)).map((e, key) => (
+              <div className={e.status == "Due"?"min-w-[300px] min-h-[100px] flex  flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-red-600 border-[1px] border-opacity-30":"min-w-[300px] min-h-[100px] flex flex-col items-center justify-between bg-[#80808031] px-5 py-4 gap-3 rounded-lg border-green-400 border-[1px] border-opacity-30 box-border"}>
+                <div>
+                  {editingIndex === key ? (
+                    
+                    <div className="flex flex-col gap-3">
+    
+                      <div className="flex items-end gap-3 ">
+                      <Input
+                      placeholder="Name"
+                      value={euserData.name}
+                      onChange={(e) => {
+                        setUserData({...euserData, name: e.target.value});
+                      }}
+                    />
+                <Input
+                  placeholder="Device Model"
+                  value={euserData.device}
                   onChange={(e) => {
-                    setUserData({...euserData, name: e.target.value});
+                    esetUserData({...euserData, device: e.target.value});
                   }}
                 />
-            <Input
-              placeholder="Device Model"
-              value={euserData.device}
-              onChange={(e) => {
-                esetUserData({...euserData, device: e.target.value});
-              }}
-            />
-                  </div>
-                 
-            <Input
-              placeholder="Date Started"
-              type="date"
-              value={euserData.date}
-              onChange={(e) => {
-                esetUserData({...euserData, date: e.target.value});
-              }}
-            />
-            <Input
-              placeholder="Status"
-              type="text"
-              value={euserData.status}
-              onChange={(e) => {
-                esetUserData({...euserData, status: e.target.value});
-              }}
-            />
-                </div>
-              ) : (
-                <>
-                  <p key={key}>Name: <span className="text-green-400 ">{e.name}</span> </p>
-                  <p>Device Model: <span className="text-green-400 uppercase ">{e.device}</span> </p>
-                  <p>Date Started: <span className="text-green-400 ">{e.date}</span> </p>
-
-               
-
-              
-                  {compareDates(formattedDate,e.dueDate)?
+                      </div>
+                     
+                <Input
+                  placeholder="Date Started"
+                  type="date"
+                  value={euserData.date}
+                  onChange={(e) => {
+                    esetUserData({...euserData, date: e.target.value});
+                  }}
+                />
+                <Input
+                  placeholder="Status"
+                  type="text"
+                  value={euserData.status}
+                  onChange={(e) => {
+                    esetUserData({...euserData, status: e.target.value});
+                  }}
+                />
+                    </div>
+                  ) : (
+                    <>
+                      <p key={key}>Name: <span className="text-green-400 ">{e.name}</span> </p>
+                      <p>Device Model: <span className="text-green-400 uppercase ">{e.device}</span> </p>
+                      <p>Date Started: <span className="text-green-400 ">{e.date}</span> </p>
+    
+                   
+    
                   
-                  update(key,{...e,status:"Due"})
-                  :update(key,{...e,status:"Connected"})}
-
-                
-
-               
-
-
-
-                  <div>
-                    <p>Status:<span className={e.status.toUpperCase()==="CONNECTED"?" text-green-400 ":" text-red-400"}>{e.status.toUpperCase()}</span> </p>
-                    <p>Days Used: <span className="text-green-400 ">{daysElapsed(e.date)} day</span> </p>
-                  
-                  
-                  </div>
-                </>
-              )}
-            </div>
-
-            <div className="flex items-center justify-start h-full gap-2">
-              {editingIndex === key ? (
-                <>
-                  <span
-                    className="cursor-pointer material-symbols-outlined hover:text-green-400"
-                    onClick={() => {
-                      let date = new Date(euserData.date);
-          date.setMonth(date.getMonth() + 1)
-          let newDateString = date.toISOString().slice(0, 10);
-          
-                      update(key, {...euserData,dueDate:newDateString});
-                      esetUserData({
-                        name:"",
-                        device:"",
-                        date:"",
-                        status:""
-                      })
-                      setEditingIndex(null);
-                      setData(read());
-                    }}
-                  >
-                    save
-                  </span>
-
-                  <span
-                    className="p-1 cursor-pointer material-symbols-outlined hover:text-red-400"
-                    onClick={() => {
-                      esetUserData({
-                        name:"",
-                        device:"",
-                        date:"",
-                        status:""
-                      })
-                      setEditingIndex(null);
-                    }}
-                  >
-                    close
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span
-                    className="cursor-pointer material-symbols-outlined hover:text-green-400"
-                    onClick={() => {
-                      esetUserData({
-                        name:e.name,
-                        device:e.device,
-                        date:e.date,
-                        status:e.status
-                      })
-                      setEditingIndex(key);
-                    }}
-                  >
-                    edit
-                  </span>
-
-                  <span
-                    className="p-1 cursor-pointer material-symbols-outlined hover:text-red-400"
-                    onClick={() => {
-
-                      if (confirm(`Are you sure you want to Delete ${e.name}?`)) {
-                        deleteItem(key);
-                        setData(read());
-                      } else {
-                        
-                      }
+                      {compareDates(formattedDate,e.dueDate)?
                       
-                    }}
-                  >
-                    delete
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-        ))}
+                      update(key,{...e,status:"Due"})
+                      :update(key,{...e,status:"Connected"})}
+    
+                    
+    
+                   
+    
+    
+    
+                      <div>
+                        <p>Status:<span className={e.status.toUpperCase()==="CONNECTED"?" text-green-400 ":" text-red-400"}>{e.status.toUpperCase()}</span> </p>
+                        <p>Days Used: <span className="text-green-400 ">{daysElapsed(e.date)} day</span> </p>
+                      
+                      
+                      </div>
+                    </>
+                  )}
+                </div>
+    
+                <div className="flex items-center justify-start h-full gap-2">
+                  {editingIndex === key ? (
+                    <>
+                      <span
+                        className="cursor-pointer material-symbols-outlined hover:text-green-400"
+                        onClick={() => {
+                          let date = new Date(euserData.date);
+              date.setMonth(date.getMonth() + 1)
+              let newDateString = date.toISOString().slice(0, 10);
+              
+                          update(key, {...euserData,dueDate:newDateString});
+                          esetUserData({
+                            name:"",
+                            device:"",
+                            date:"",
+                            status:""
+                          })
+                          setEditingIndex(null);
+                          setData(read());
+                        }}
+                      >
+                        save
+                      </span>
+    
+                      <span
+                        className="p-1 cursor-pointer material-symbols-outlined hover:text-red-400"
+                        onClick={() => {
+                          esetUserData({
+                            name:"",
+                            device:"",
+                            date:"",
+                            status:""
+                          })
+                          setEditingIndex(null);
+                        }}
+                      >
+                        close
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span
+                        className="cursor-pointer material-symbols-outlined hover:text-green-400"
+                        onClick={() => {
+                          esetUserData({
+                            name:e.name,
+                            device:e.device,
+                            date:e.date,
+                            status:e.status
+                          })
+                          setEditingIndex(key);
+                        }}
+                      >
+                        edit
+                      </span>
+    
+                      <span
+                        className="p-1 cursor-pointer material-symbols-outlined hover:text-red-400"
+                        onClick={() => {
+    
+                          if (confirm(`Are you sure you want to Delete ${e.name}?`)) {
+                            deleteItem(key);
+                            setData(read());
+                          } else {
+                            
+                          }
+                          
+                        }}
+                      >
+                        delete
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))
+            
+            
+            
+            
+            :""} 
+        
       </div>
     </div>
   );
